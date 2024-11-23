@@ -33,7 +33,7 @@ export const registrarCliente = async (req, res) => {
       Correo,
       Contrasena: hashedPassword,
       FechaNacimiento,
-      Sexo,
+      sexo:Sexo,
       RolID: 1, // Rol de cliente
     });
 
