@@ -10,7 +10,7 @@ export const registrarCliente = async (req, res) => {
   const { Nombre, Correo, Contrasena, FechaNacimiento, Sexo,NIT,CI,telefono,Direccion} = req.body;
 
   // Validar que todos los campos necesarios estén presentes
-  if (!Nombre || !Correo || !Contrasena || !FechaNacimiento || !Sexo || !CI || !telefono || !Direccion) {
+  if (!Nombre || !Correo || !Contrasena || !FechaNacimiento || !Sexo || !CI || !telefono ) {
     return res.status(400).json({ message: 'Todos los campos son obligatorios' });
   }
 
