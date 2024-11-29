@@ -33,7 +33,7 @@ export const login = async (req, res) => {
                 },
                 { 
                     model: telefono, 
-                    as:'Telfonos',
+                    as:'Telefonos',
                     attributes: ['Nro'] 
                 },
                 { 
