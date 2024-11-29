@@ -22,14 +22,17 @@ export const login = async (req, res) => {
                 { model: Rol, attributes: ['Nombre'] }, 
                 { 
                     model: DetalleDocumento, 
+                    as:'DetalleDocumentos',
                     attributes: ['NumeroDocumento'], 
                     include: { 
                         model: Documento, 
+                        as:'Documento',
                         attributes: ['TipoDocumento'] 
                     }
                 },
                 { 
                     model: telefono, 
+                    as:'Telfonos',
                     attributes: ['Nro'] 
                 },
                 { 
