@@ -15,6 +15,7 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
     
     try {
+        console.log(usuario.associations);
         const existUser = await usuario.findOne({ 
             where: { Correo: email },
             attributes: ['UsuarioID', 'Correo', 'Contrasena', 'RolID', 'Sexo', 'FechaNacimiento'], 
