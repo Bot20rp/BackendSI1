@@ -18,7 +18,7 @@ export const login = async (req, res) => {
         console.log(usuario.associations);
         const existUser = await usuario.findOne({ 
             where: { Correo: email },
-            attributes: ['UsuarioID', 'Correo', 'Contrasena', 'RolID', 'Sexo', 'FechaNacimiento'], 
+            attributes: ['UsuarioID','Nombre', 'Correo', 'Contrasena', 'RolID', 'Sexo', 'FechaNacimiento'], 
             include: [
                 { model: Rol, attributes: ['Nombre'] }, 
                 { 
@@ -42,7 +42,6 @@ export const login = async (req, res) => {
                 }
             ]
         });
-
         if (!existUser) {
             return res.status(401).json({ mensaje: 'Ese usuario no existe' });
         }
