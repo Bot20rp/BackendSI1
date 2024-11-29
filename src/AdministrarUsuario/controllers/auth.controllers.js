@@ -63,6 +63,7 @@ export const login = async (req, res) => {
             token,
             user: {
                 id: existUser.UsuarioID,
+                nombre:existUser.Nombre,
                 email: existUser.Correo,
                 rol: existUser.Rol.Nombre,
                 permisos,
