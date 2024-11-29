@@ -2,6 +2,8 @@ import { where } from 'sequelize';
 import usuario from '../models/Usuario.js';
 import Documento from '../models/Documento.js';
 import DetalleDocumento from '../models/DetalleDocumento.js';
+import telefono from '../models/Telefono.js';
+import cliente from '../models/Cliente.js';
 import bcrypt from 'bcryptjs'; // Asegúrate de que este sea el nombre correcto
 import { createAccesToken } from '../../libs/tokens.js';
 import jwt from 'jsonwebtoken'
@@ -27,7 +29,7 @@ export const login = async (req, res) => {
                     }
                 },
                 { 
-                    model: Telefono, 
+                    model: telefono, 
                     attributes: ['Nro'] 
                 },
                 { 
