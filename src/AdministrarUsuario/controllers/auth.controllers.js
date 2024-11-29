@@ -1,5 +1,7 @@
 import { where } from 'sequelize';
 import usuario from '../models/Usuario.js';
+import Documento from '../models/Documento.js';
+import DetalleDocumento from '../models/DetalleDocumento.js';
 import bcrypt from 'bcryptjs'; // Asegúrate de que este sea el nombre correcto
 import { createAccesToken } from '../../libs/tokens.js';
 import jwt from 'jsonwebtoken'
@@ -13,49 +15,69 @@ export const login = async (req, res) => {
     try {
         const existUser = await usuario.findOne({ 
             where: { Correo: email },
-            attributes: ['UsuarioID', 'Correo', 'Contrasena','RolID'],
-            include: { model: Rol, attributes: ['Nombre'] }  // Cambia 'Nombre' a ['Nombre']
+            attributes: ['UsuarioID', 'Correo', 'Contrasena', 'RolID', 'Sexo', 'FechaNacimiento'], 
+            include: [
+                { model: Rol, attributes: ['Nombre'] }, 
+                { 
+                    model: DetalleDocumento, 
+                    attributes: ['NumeroDocumento'], 
+                    include: { 
+                        model: Documento, 
+                        attributes: ['TipoDocumento'] 
+                    }
+                },
+                { 
+                    model: Telefono, 
+                    attributes: ['Nro'] 
+                },
+                { 
+                    model: cliente, 
+                    attributes: ['Direccion']
+                }
+            ]
         });
 
         if (!existUser) {
             return res.status(401).json({ mensaje: 'Ese usuario no existe' });
         }
-
-
-        console.log(existUser.UsuarioID)
-        console.log(existUser.Correo)
-        console.log(existUser.Rol.Nombre)
-
         if (!bcrypt.compareSync(password, existUser.Contrasena)) {
             return res.status(401).json({ mensaje: 'Contraseña incorrecta' });
         }
-
-        // Contraseña correcta, generar token
-        const token = await createAccesToken({id: existUser.UsuarioID});
-
-        const permisos=await obtenerPermisosXRol(existUser.RolID)
-        console.log(permisos)
+        const token = await createAccesToken({ id: existUser.UsuarioID });
+        const permisos = await obtenerPermisosXRol(existUser.RolID);
+        const documentos = existUser.DetalleDocumentos.map((doc) => {
+            return { 
+                tipo: doc.Documento.TipoDocumento, 
+                numero: doc.NumeroDocumento 
+            };
+        });
+        const ci = documentos.find(doc => doc.tipo === 'Cédula de Identidad')?.numero || null;
+        const nit = documentos.find(doc => doc.tipo === 'NIT')?.numero || null;
         res.json({
-            message: "usuario creado sucess",
+            message: "Inicio de sesión exitoso",
             token,
             user: {
                 id: existUser.UsuarioID,
                 email: existUser.Correo,
                 rol: existUser.Rol.Nombre,
-                permisos
+                permisos,
+                genero: existUser.Sexo,
+                fechaNacimiento: existUser.FechaNacimiento,
+                direccion: existUser.cliente?.Direccion || null,
+                telefono: existUser.Telefonos?.[0]?.Nro || null,
+                ci,
+                nit
             }
-        })
-        //registrar en la  bitacora
-        const message="inicio Sesion"
-        const UsuarioID=existUser.UsuarioID
-        console.log(req.body)
-        await createBitacora({UsuarioID,message},res);
-        
+        });
+        const message = "Inicio de sesión";
+        const UsuarioID = existUser.UsuarioID;
+        await createBitacora({ UsuarioID, message }, res);    
     } catch (error) {
         console.error(error);
         return res.status(500).json({ mensaje: 'Error en el servidor' });
     }
 };
+
 
 export const logout = async (req,res) => {
     const message="Cerrar Sesion"

@@ -178,8 +178,6 @@ export const updateUsuarioG=async (req,res)=>{
   }
 };
 
-
-
 export const deleteUsuarioG=async (req,res)=>{
   console.log(req.body.data)
   const {id}=req.body.data
@@ -243,9 +241,7 @@ export const obtenerUsuarioPorID = async (req, res) => {
     // Extraer el token de la cabecera
     const token = req.headers['authorization'];
     if (!token) {
-      return res.status(401).json({ message: 'Token no proporcionado' });
-    }
-
+      return res.status(401).json({ message: 'Token no proporcionado' });   }    
     // Verificar y decodificar el token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const UsuarioID = decoded.id; // Asegúrate de que el token contenga el ID del usuario
