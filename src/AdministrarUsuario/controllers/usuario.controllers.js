@@ -236,65 +236,46 @@ export const deleteUsuarioG=async (req,res)=>{
   }
 };
 
-export const obtenerUsuarioPorID = async (req, res) => {
+export const actualizarDatosUsuario = async (req, res) => {
   try {
-    // Extraer el token de la cabecera
-    const token = req.headers['authorization'];
-    if (!token) {
-      return res.status(401).json({ message: 'Token no proporcionado' });   }    
-    // Verificar y decodificar el token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const UsuarioID = decoded.id; // Asegúrate de que el token contenga el ID del usuario
+      const { id } = req.user; // Obtenemos el ID del usuario desde el middleware
+      const { direccion, correo, telefono } = req.body; // Datos enviados en el cuerpo de la solicitud
 
-    // Consultar al usuario por su ID
-    const usuario = await Usuario.findOne({
-      attributes: ['UsuarioID', 'Nombre', 'Correo', 'Sexo', 'FechaNacimiento'], // Excluir contraseña
-      where: { UsuarioID, Estado: true }, // Asegurarse de que el usuario esté activo
-      include: [
-        {
-          model: DetalleDocumento,
-          as: 'DetalleDocumentos',
-          attributes: ['NumeroDocumento'],
-          include: [
-            {
-              model: Documento,
-              as: 'Documento',
-              attributes: ['TipoDocumento'],
-            },
-          ],
-        },
-        {
-          model: Telefono,
-          as: 'Telefonos',
-          attributes: ['Nro'],
-        },
-      ],
-    });
+      // Validar que al menos uno de los campos esté presente
+      if (!direccion && !correo && !telefono) {
+          return res.status(400).json({ mensaje: "Debes proporcionar al menos un dato para actualizar (dirección, correo o teléfono)." });
+      }
 
-    if (!usuario) {
-      return res.status(404).json({ message: 'Usuario no encontrado' });
-    }
+      // Actualizar los datos en la tabla Cliente (para dirección)
+      if (direccion) {
+          const clienteActualizado = await Cliente.update(
+              { Direccion: direccion },
+              { where: { UsuarioID: id } }
+          );
+          if (!clienteActualizado) {
+              return res.status(500).json({ mensaje: "No se pudo actualizar la dirección." });
+          }
+      }
 
-    // Formatear los datos del usuario
-    const usuarioFormateado = {
-      usuario: usuario.Nombre,
-      correo: usuario.Correo,
-      telefono: usuario.Telefonos[0]?.Nro || 'No registrado',
-      genero: usuario.Sexo === 'M' ? 'Masculino' : 'Femenino',
-      fechaNacimiento: usuario.FechaNacimiento,
-      ci: usuario.DetalleDocumentos?.[0]?.NumeroDocumento || 'No registrado',
-      nit: usuario.DetalleDocumentos?.[1]?.NumeroDocumento || 'No registrado',
-    };
+      // Actualizar los datos en la tabla Usuario (para correo y teléfono)
+      const datosUsuario = {};
+      if (correo) datosUsuario.Correo = correo;
+      if (telefono) datosUsuario.Telefono = telefono;
 
-    // Inspeccionar el objeto antes de enviarlo
-    console.log('Usuario formateado:', usuarioFormateado);
+      if (Object.keys(datosUsuario).length > 0) {
+          const usuarioActualizado = await Usuario.update(
+              datosUsuario,
+              { where: { UsuarioID: id } }
+          );
+          if (!usuarioActualizado) {
+              return res.status(500).json({ mensaje: "No se pudo actualizar el correo o teléfono." });
+          }
+      }
 
-    res.status(200).json({
-      message: 'Usuario obtenido exitosamente',
-      usuario: usuarioFormateado,
-    });
+      res.json({ mensaje: "Datos actualizados correctamente." });
   } catch (error) {
-    console.error('Error al obtener el usuario:', error);
-    res.status(500).json({ message: 'Error al obtener el usuario', error: error.message });
+      console.error("Error en actualizarDatosUsuario:", error);
+      res.status(500).json({ mensaje: "Error en el servidor." });
   }
 };
+

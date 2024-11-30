@@ -129,6 +129,7 @@ const result={
     res.status(500).json({ error: 'Error al generar la factura' });
   }
 }
+
 export const  getFactura=async (req,res)=>{
     try {
         const factura=await Factura.findAll({
