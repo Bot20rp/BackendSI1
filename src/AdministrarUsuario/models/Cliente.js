@@ -12,7 +12,7 @@ const cliente =db.define('Cliente',{
         }
     },
     Direccion:{
-        type:DataTypes.STRING(255)
+        type:DataTypes.STRING(250)
     }
 }, {
     tableName: 'Cliente',
