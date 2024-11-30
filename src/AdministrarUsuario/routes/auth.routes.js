@@ -7,5 +7,5 @@ router.post("/login",login);
 router.get("/verify",verifyToken);
 router.get("/verify1",verifyToken1)
 router.post("/logout",authenticateToken,logout);
-router.patch("/cambioContra",cambiarContrasena);
+router.put("/cambioContra",cambiarContrasena);
 export default router;
