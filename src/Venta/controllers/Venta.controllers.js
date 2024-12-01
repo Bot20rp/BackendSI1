@@ -6,9 +6,12 @@ import DetalleVenta from "../models/DetalleVenta.js";
 import Transaccion from "../models/Transaccion.js";
 import TipoVenta from '../models/TipoVenta.js';
 import Apertura from "../models/Apertura.js";
+import Combo from "../models/Combo.js";
 import { DataTypes } from 'sequelize';
 import { db } from '../../config/dbConfig.js';
 import Suministro from "../../AdministrarInventario/models/Suministro.js";
+import DetalleCombo from "../models/DetalleCombo.js";
+import VentaCombo from "../models/VentaCombo.js";
 
 
 export const getTipoVenta= async (req, res)=>{
@@ -30,7 +33,7 @@ export const getTipoVenta= async (req, res)=>{
 export const crearFactura = async (req, res) => {
   console.log(req.body.data)
   try {
-    const { clienteID, productos, fecha, tipoVenta, totalVenta, pagoEfectivo, pagoQr, pagoTarjeta } = req.body.data;
+    const { clienteID, productos,combos, fecha, tipoVenta, totalVenta, pagoEfectivo, pagoQr, pagoTarjeta } = req.body.data;
 
     // Obtener el último número de factura
     const ultimaFactura = await Factura.findOne({ order: [['NroFactura', 'DESC']] });
@@ -41,7 +44,6 @@ export const crearFactura = async (req, res) => {
     if (!cliente) return res.status(404).json({ message: "Cliente no encontrado" });
 
     // Generar el Código de Control y Código de Autorización usando los procedimientos almacenados
-   // Generar Código de Control
    await db.query('CALL GenerarCodigoControl(@CodigoControl)');
    const [codigoControlResult] = await db.query('SELECT @CodigoControl AS CodigoControl');
    console.log(codigoControlResult);
@@ -114,6 +116,40 @@ export const crearFactura = async (req, res) => {
         await suministro.update({ CantidadSaldo: nuevaCantidadSaldo });
       }else {
         console.warn(`Suministro no encontrado para ProductoID ${productoID}`);
+      }
+    }
+    // Procesar los combos
+    if (combos && combos.length > 0) {
+      for (const combo of combos) {
+        const comboID = combo.id;
+        const { cantidad } = combo;
+
+        // Validar existencia del combo
+        const comboExistente = await Combo.findByPk(comboID);
+        if (!comboExistente) continue;
+
+        // Crear registro en VentaCombo
+        await VentaCombo.create({
+          ComboID: comboID,
+          NotaVentaID: nuevaNotaVenta.NotaVentaID,
+        });
+        // Obtener los productos del combo y actualizar sus cantidades en Suministro
+        const detallesCombo = await DetalleCombo.findAll({ where: { ComboID: comboID } });
+        for (const detalle of detallesCombo) {
+          const productoID = detalle.ProductoID;
+          const cantidadProducto = detalle.cantidad * cantidad;
+
+          const suministro = await Suministro.findOne({ where: { ProductoID: productoID } });
+          if (suministro) {
+            const nuevaCantidadSaldo = suministro.CantidadSaldo - cantidadProducto;
+            if (nuevaCantidadSaldo < 0) {
+              return res.status(400).json({
+                message: `No hay suficiente suministro para el producto con ID ${productoID} en el combo ${comboID}`,
+              });
+            }
+            await suministro.update({ CantidadSaldo: nuevaCantidadSaldo });
+          }
+        }
       }
     }
 
