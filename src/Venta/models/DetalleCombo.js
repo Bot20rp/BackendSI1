@@ -5,7 +5,7 @@ import Producto from "../../AdministrarInventario/models/Producto.js"; // Asegú
 
 const DetalleCombo = db.define('DetalleCombo', {
     ComboID: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING(4),
         references: {
             model: Combo, // Referencia al modelo Combo
             key: 'ComboID'

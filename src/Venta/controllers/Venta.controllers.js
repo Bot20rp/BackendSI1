@@ -30,6 +30,7 @@ export const getTipoVenta= async (req, res)=>{
     }
 }
 
+
 export const crearFactura = async (req, res) => {
   console.log(req.body.data)
   try {
@@ -104,7 +105,6 @@ export const crearFactura = async (req, res) => {
         NotaVentaID: nuevaNotaVenta.NotaVentaID,
         cantidad: cantidad,
       });
-
       const suministro = await Suministro.findOne({ where: { ProductoID: productoID } });
       if (suministro) {
         const nuevaCantidadSaldo = suministro.CantidadSaldo - cantidad;

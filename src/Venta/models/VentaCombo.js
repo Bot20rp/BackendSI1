@@ -5,7 +5,7 @@ import NotaVenta from './NotaVenta.js';  // Asegúrate de importar el modelo Not
 
 const VentaCombo = db.define('VentaCombo', {
     ComboID: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING(4),
         allowNull: false,
         primaryKey: true,
         references: {
