@@ -130,13 +130,11 @@ export const updateProducto1 = async (req, res) => {
         if (!ProductoID) {
             return res.status(400).json({ message: 'El ID del producto es obligatorio.' });
         }
-
         // Buscar el producto existente
         const productoExistente = await producto.findByPk(ProductoID);
         if (!productoExistente) {
             return res.status(404).json({ message: 'Producto no encontrado.' });
         }
-
         // Actualizar el producto con los nuevos valores (si se proporcionan)
         const updatedProducto = await producto.update(
             {
@@ -151,7 +149,6 @@ export const updateProducto1 = async (req, res) => {
                 where: { ProductoID } // Filtrar por el ID del producto
             }
         );
-
         // Actualizar o crear la asociación con el volumen en la tabla intermedia CantidadVolumen
         if (Volumen !== undefined) {
             const cantidadVolumenExistente = await CantidadVolumen.findOne({
@@ -172,11 +169,9 @@ export const updateProducto1 = async (req, res) => {
                 });
             }
         }
-
         // Registrar el evento en la bitácora
         const message = `actualizado prod: ${ProductoID}, Name ${Nombre || productoExistente.Nombre}`;
         await createBitacora({ UsuarioID, message });
-
         res.status(200).json({
             message: 'Producto actualizado exitosamente.',
             producto: updatedProducto

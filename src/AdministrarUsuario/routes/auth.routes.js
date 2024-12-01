@@ -5,7 +5,7 @@ const router = Router();
 
 router.post("/login",login);
 router.get("/verify",verifyToken);
-router.get("/verify1",verifyToken1)
+router.get("/verify1",verifyToken1); 
 router.post("/logout",authenticateToken,logout);
 router.put("/cambioContra",authenticateToken,cambiarContrasena);
 export default router;

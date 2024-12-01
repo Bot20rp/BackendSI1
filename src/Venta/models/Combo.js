@@ -3,9 +3,8 @@ import { db } from "../../config/dbConfig.js";
 
 const Combo = db.define('Combo', {
     ComboID: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
+        type: DataTypes.STRING(4),
+        primaryKey: true
     },
     Descripcion: {
         type: DataTypes.STRING(100),
