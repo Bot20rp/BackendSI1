@@ -185,24 +185,38 @@ export const updateProducto1 = async (req, res) => {
         
         // Actualizar o crear la asociación con el volumen en la tabla intermedia CantidadVolumen
         if (Volumen !== undefined) {
+            // Buscar el VolumenID basado en la descripción proporcionada
+            const volumenExistente = await Volumen.findOne({
+                where: { Descripcion: Volumen } // Aquí buscas por "750 ml"
+            });
+        
+            if (!volumenExistente) {
+                // Si no existe, devolver un error
+                return res.status(404).json({ message: `El volumen "${Volumen}" no existe en la base de datos.` });
+            }
+        
+            const volumenID = volumenExistente.VolumenID; // Obtener el ID correcto
+        
+            // Verificar o actualizar la asociación con CantidadVolumen
             const cantidadVolumenExistente = await CantidadVolumen.findOne({
                 where: { ProductoID }
             });
-
+        
             if (cantidadVolumenExistente) {
                 // Actualizar la asociación existente
                 await CantidadVolumen.update(
-                    { VolumenID: parseInt(Volumen) },
+                    { VolumenID: volumenID },
                     { where: { ProductoID } }
                 );
             } else {
                 // Crear una nueva asociación si no existe
                 await CantidadVolumen.create({
                     ProductoID,
-                    VolumenID: parseInt(Volumen)
+                    VolumenID: volumenID
                 });
             }
         }
+        
         // Registrar el evento en la bitácora
         const message = `actualizado prod: ${ProductoID}, Name ${Nombre || productoExistente.Nombre}`;
         await createBitacora({ UsuarioID, message });
