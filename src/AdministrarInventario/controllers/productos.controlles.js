@@ -124,7 +124,7 @@ export const deleteproducto = async (req, res) => {
 
 // Función para actualizar un producto con sus volúmenes asociados
 export const updateProducto1 = async (req, res) => {
-    console.log(req.body.data);
+    console.log("ingresando : "+req.body.data);
     const { ProductoID, Nombre, Precio, Marca, Estante, Categoria, Volumen } = req.body.data;
     const UsuarioID = req.user.id; // Obtener el ID del usuario logueado
     try {
@@ -141,15 +141,17 @@ export const updateProducto1 = async (req, res) => {
         const marca = Marca
             ? await Marca.findOne({ where: { Nombre: Marca } })
             : null;
-            console.log(Marca);
+           
         const estante = Estante
             ? await Estante.findOne({ where: { Nombre: Estante } })
             : null;
-            console.log(Estante);
+           
         const categoria = Categoria
             ? await Categoria.findOne({ where: { Descripcion: Categoria } })
             : null;
-            console.log(Categoria);
+        console.log(Marca+"nro "+{marca}),
+        console.log(Categoria+"nro "+{categoria}),
+        console.log(Estante+"nro "+{estante});
         // Verificar que los registros existan
         if (Marca && !marca) {
             return res.status(404).json({ message: `Marca "${Marca}" no encontrada.` });
