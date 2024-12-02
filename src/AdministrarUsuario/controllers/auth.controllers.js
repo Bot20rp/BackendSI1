@@ -178,25 +178,20 @@ export const cambiarContrasena = async (req, res) => {
         if (!existUser) {
             return res.status(404).json({ mensaje: 'Usuario no encontrado' });
         }
-
         // Verificar que la contraseña actual coincida con la almacenada en la base de datos
         const isPasswordValid = bcrypt.compareSync(oldPassword, existUser.Contrasena);
         if (!isPasswordValid) {
             return res.status(401).json({ mensaje: 'Contraseña actual incorrecta' });
         }
-
         // Validar que la nueva contraseña cumpla con los requisitos de seguridad (opcional)
         if (newPassword.length < 6) {
             return res.status(400).json({ mensaje: 'La nueva contraseña debe tener al menos 6 caracteres' });
         }
-
         // Hash de la nueva contraseña
         const hashedPassword = bcrypt.hashSync(newPassword, 10);
-
         // Actualizar la contraseña en la base de datos
         existUser.Contrasena = hashedPassword;
         await existUser.save();
-
         res.json({ mensaje: 'Contraseña cambiada con éxito' });
     } catch (error) {
         console.error('Error al cambiar la contraseña:', error);

@@ -2,6 +2,8 @@ import producto, { createProducto, obtProducto, actProducto } from "../models/Pr
 import CantidadVolumen from "../models/CantidadVolumen.js";
 import { createBitacora } from "../../AdministrarUsuario/controllers/bitacora.controllers.js";
 import { renombrarImagenes } from "../../libs/helpers.js";
+import Volumen from "../models/Volumen.js";
+
 
 export const registrarProducto = async (req, res) => {
     // const {Nombre,Precio,Volumen,Marca,Estante,CategoriaID}=req.body
@@ -139,13 +141,15 @@ export const updateProducto1 = async (req, res) => {
         const marca = Marca
             ? await Marca.findOne({ where: { Nombre: Marca } })
             : null;
+            console.log(Marca);
         const estante = Estante
             ? await Estante.findOne({ where: { Nombre: Estante } })
             : null;
+            console.log(Estante);
         const categoria = Categoria
-            ? await Categoria.findOne({ where: { Nombre: Categoria } })
+            ? await Categoria.findOne({ where: { Descripcion: Categoria } })
             : null;
-
+            console.log(Categoria);
         // Verificar que los registros existan
         if (Marca && !marca) {
             return res.status(404).json({ message: `Marca "${Marca}" no encontrada.` });
