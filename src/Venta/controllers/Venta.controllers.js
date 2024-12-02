@@ -90,6 +90,7 @@ export const crearFactura = async (req, res) => {
     });
 
     // Procesar cada producto en el array de productos
+    if (productos && productos.length > 0) {
     for (const producto of productos) {
         const productoID = producto.id;
       const {  cantidad } = producto;
@@ -117,6 +118,7 @@ export const crearFactura = async (req, res) => {
         console.warn(`Suministro no encontrado para ProductoID ${productoID}`);
       }
     }
+  }
     // Procesar los combos
     if (combos && combos.length > 0) {
       for (const combo of combos) {
