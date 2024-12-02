@@ -3,6 +3,10 @@ import CantidadVolumen from "../models/CantidadVolumen.js";
 import { createBitacora } from "../../AdministrarUsuario/controllers/bitacora.controllers.js";
 import { renombrarImagenes } from "../../libs/helpers.js";
 import Volumen from "../models/Volumen.js";
+import categoria from "../models/Categoria.js";
+import estante from "../models/Estante.js";
+import marca from "../models/Marca.js";
+
 
 
 export const registrarProducto = async (req, res) => {
@@ -138,28 +142,29 @@ export const updateProducto1 = async (req, res) => {
             return res.status(404).json({ message: 'Producto no encontrado.' });
         }
 
-        const marca = Marca
-            ? await Marca.findOne({ where: { Nombre: Marca } })
+        const marca1 = Marca
+            ? await marca.findOne({ where: { Nombre: Marca } })
             : null;
            
-        const estante = Estante
-            ? await Estante.findOne({ where: { Nombre: Estante } })
+        const estante1 = Estante
+            ? await estante.findOne({ where: { Nombre: Estante } })
             : null;
            
-        const categoria = Categoria
-            ? await Categoria.findOne({ where: { Descripcion: Categoria } })
+        const categoria1 = Categoria
+            ? await categoria.findOne({ where: { Descripcion: Categoria } })
             : null;
-        console.log(Marca+"nro "+{marca}),
-        console.log(Categoria+"nro "+{categoria}),
-        console.log(Estante+"nro "+{estante});
+      // Debug para verificar si se encontraron las entidades
+        console.log(`Marca: ${Marca}, Resultado: ${marca1 ? JSON.stringify(marca1) : 'No encontrada'}`);
+        console.log(`Estante: ${Estante}, Resultado: ${estante1 ? JSON.stringify(estante1) : 'No encontrado'}`);
+        console.log(`Categoría: ${Categoria}, Resultado: ${categoria1 ? JSON.stringify(categoria1) : 'No encontrada'}`);
         // Verificar que los registros existan
-        if (Marca && !marca) {
+        if (Marca && !marca1) {
             return res.status(404).json({ message: `Marca "${Marca}" no encontrada.` });
         }
-        if (Estante && !estante) {
+        if (Estante && !estante1) {
             return res.status(404).json({ message: `Estante "${Estante}" no encontrado.` });
         }
-        if (Categoria && !categoria) {
+        if (Categoria && !categoria1) {
             return res.status(404).json({ message: `Categoría "${Categoria}" no encontrada.` });
         }
 
