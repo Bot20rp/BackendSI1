@@ -143,20 +143,22 @@ export const updateProducto1 = async (req, res) => {
         }
 
         const marca1 = Marca
-            ? await marca.findOne({ where: { Nombre: Marca } })
-            : null;
-           
-        const estante1 = Estante
-            ? await estante.findOne({ where: { Nombre: Estante } })
-            : null;
-           
-        const categoria1 = Categoria
-            ? await categoria.findOne({ where: { Descripcion: Categoria } })
-            : null;
+        ? await marca.findOne({ where: { Nombre: Marca } }) // Asegúrate de que "Nombre" sea el campo correcto
+        : null;
+    
+    const estante1 = Estante
+        ? await estante.findOne({ where: { Nombre: Estante } }) // Igual para "Estante"
+        : null;
+    
+    const categoria1 = Categoria
+        ? await categoria.findOne({ where: { Nombre: Categoria } }) // Cambia "Descripcion" por "Nombre" si corresponde
+        : null;
+    
       // Debug para verificar si se encontraron las entidades
-        console.log(`Marca: ${Marca}, Resultado: ${marca1 ? JSON.stringify(marca1) : 'No encontrada'}`);
-        console.log(`Estante: ${Estante}, Resultado: ${estante1 ? JSON.stringify(estante1) : 'No encontrado'}`);
-        console.log(`Categoría: ${Categoria}, Resultado: ${categoria1 ? JSON.stringify(categoria1) : 'No encontrada'}`);
+      console.log(`Buscando Marca "${Marca}" => Resultado:`, marca1);
+      console.log(`Buscando Estante "${Estante}" => Resultado:`, estante1);
+      console.log(`Buscando Categoria "${Categoria}" => Resultado:`, categoria1);
+      
         // Verificar que los registros existan
         if (Marca && !marca1) {
             return res.status(404).json({ message: `Marca "${Marca}" no encontrada.` });
@@ -173,15 +175,14 @@ export const updateProducto1 = async (req, res) => {
             {
                 Nombre: Nombre || productoExistente.Nombre,
                 Precio: Precio !== undefined ? parseFloat(Precio) : productoExistente.Precio,
-                MarcaID: Marca !== undefined ? parseInt(Marca) : productoExistente.MarcaID,
-                EstanteID: Estante !== undefined ? parseInt(Estante) : productoExistente.EstanteID,
-                CategoriaID: Categoria !== undefined ? parseInt(Categoria) : productoExistente.CategoriaID,
-                Estado: 1 // Se mantiene el estado activo
+                MarcaID: marca1 ? marca1.MarcaID : productoExistente.MarcaID,
+                EstanteID: estante1 ? estante1.EstanteID : productoExistente.EstanteID,
+                CategoriaID: categoria1 ? categoria1.CategoriaID : productoExistente.CategoriaID,
+                Estado: 1
             },
-            {
-                where: { ProductoID } // Filtrar por el ID del producto
-            }
+            { where: { ProductoID } }
         );
+        
         // Actualizar o crear la asociación con el volumen en la tabla intermedia CantidadVolumen
         if (Volumen !== undefined) {
             const cantidadVolumenExistente = await CantidadVolumen.findOne({
