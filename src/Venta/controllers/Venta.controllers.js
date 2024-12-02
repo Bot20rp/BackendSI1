@@ -91,6 +91,7 @@ export const crearFactura = async (req, res) => {
 
     // Procesar cada producto en el array de productos
     if (productos && productos.length > 0) {
+      console.log('prod'+productos);
     for (const producto of productos) {
         const productoID = producto.id;
       const {  cantidad } = producto;
@@ -121,6 +122,7 @@ export const crearFactura = async (req, res) => {
   }
     // Procesar los combos
     if (combos && combos.length > 0) {
+      console.log('comb'+combos);
       for (const combo of combos) {
         const comboID = combo.ComboID;
         const { cantidad } = combo;
