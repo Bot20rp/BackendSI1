@@ -128,7 +128,7 @@ export const deleteproducto = async (req, res) => {
 
 // Función para actualizar un producto con sus volúmenes asociados
 export const updateProducto1 = async (req, res) => {
-    console.log("ingresando : "+req.body.data);
+    console.log("Contenido de req.body.data:", JSON.stringify(req.body.data, null, 2));
     const { ProductoID, Nombre, Precio, Marca, Estante, Categoria, Volumen } = req.body.data;
     const UsuarioID = req.user.id; // Obtener el ID del usuario logueado
     try {
