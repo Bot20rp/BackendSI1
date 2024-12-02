@@ -18,7 +18,7 @@ export const login = async (req, res) => {
         console.log(usuario.associations);
         const existUser = await usuario.findOne({ 
             where: { Correo: email },
-            attributes: ['UsuarioID','Nombre', 'Correo', 'Contrasena', 'RolID', 'Sexo', 'FechaNacimiento'], 
+            attributes: ['UsuarioID','Nombre', 'Correo', 'Contrasena', 'RolID', 'sexo', 'FechaNacimiento'], 
             include: [
                 { model: Rol, attributes: ['Nombre'] }, 
                 { 
@@ -67,7 +67,7 @@ export const login = async (req, res) => {
                 email: existUser.Correo,
                 rol: existUser.Rol.Nombre,
                 permisos,
-                genero: existUser.Sexo,
+                genero: existUser.sexo,
                 fechaNacimiento: existUser.FechaNacimiento,
                 direccion: existUser.cliente?.Direccion || null,
                 telefono: existUser.Telefonos?.[0]?.Nro || null,
