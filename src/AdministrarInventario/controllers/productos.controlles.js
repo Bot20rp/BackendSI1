@@ -135,6 +135,28 @@ export const updateProducto1 = async (req, res) => {
         if (!productoExistente) {
             return res.status(404).json({ message: 'Producto no encontrado.' });
         }
+
+        const marca = Marca
+            ? await Marca.findOne({ where: { Nombre: Marca } })
+            : null;
+        const estante = Estante
+            ? await Estante.findOne({ where: { Nombre: Estante } })
+            : null;
+        const categoria = Categoria
+            ? await Categoria.findOne({ where: { Nombre: Categoria } })
+            : null;
+
+        // Verificar que los registros existan
+        if (Marca && !marca) {
+            return res.status(404).json({ message: `Marca "${Marca}" no encontrada.` });
+        }
+        if (Estante && !estante) {
+            return res.status(404).json({ message: `Estante "${Estante}" no encontrado.` });
+        }
+        if (Categoria && !categoria) {
+            return res.status(404).json({ message: `Categoría "${Categoria}" no encontrada.` });
+        }
+
         // Actualizar el producto con los nuevos valores (si se proporcionan)
         const updatedProducto = await producto.update(
             {
