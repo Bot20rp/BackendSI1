@@ -1,11 +1,27 @@
 import { json } from "sequelize";
 import Apertura from "../models/Apertura.js";
 
+// Función para convertir el formato de hora a 24 horas
+function convertTo24HourFormat(time) {
+    let [timeStr, modifier] = time.split(' '); // Separa la hora y el 'a.m.'/'p.m.'
+    let [hours, minutes, seconds] = timeStr.split(':'); // Separa la hora, minutos y segundos
+
+    // Convierte a 24 horas
+    if (modifier.toLowerCase() === 'p.m.' && hours !== '12') {
+        hours = (parseInt(hours) + 12).toString();
+    } else if (modifier.toLowerCase() === 'a.m.' && hours === '12') {
+        hours = '00'; // Caso especial para las 12 a.m., que es medianoche
+    }
+
+    // Devuelve la hora en formato de 24 horas
+    return `${hours}:${minutes}:${seconds}`;
+}
+
 export const InicoApertura = async (req, res)=>{
     try {
         console.log(req.body)
         const {CajaChica,FechaInicio, HoraInicio}=req.body.data; 
-
+        let horaInicio24 = convertTo24HourFormat(HoraInicio);
         // verifica apertura
         const aperturaActiva= await Apertura.findOne({
             where :{FechaCierre:null}
@@ -24,7 +40,7 @@ export const InicoApertura = async (req, res)=>{
             recuentoQr:0,
             recuentoTarjeta:0,
             CajaChica,
-            HoraInicio,
+            HoraInicio:horaInicio24,
             Estado: true
         }); 
 
@@ -43,7 +59,7 @@ export const InicoApertura = async (req, res)=>{
 export const CierreApertura = async (req, res)=>{
     try {
         const {AperturaID,FechaCierre,HoraFin,CajaChica,SaldoEfectivo, SaldoQr, SaldoTarjeta,recuentoEfectivo,recuentoQr,recuentoTarjeta}=req.body.data; 
-
+        let horaInicio24 = convertTo24HourFormat(HoraFin);
         // verifica apertura
         const aperturaActiva= await Apertura.findOne({
             where :{AperturaID, FechaCierre:null}
@@ -61,7 +77,7 @@ export const CierreApertura = async (req, res)=>{
             recuentoQr,
             recuentoTarjeta,
             CajaChica,
-            HoraFin,
+            HoraFin:horaInicio24,
             Estado: false
         },
         {
