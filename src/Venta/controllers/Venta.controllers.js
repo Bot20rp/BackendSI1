@@ -30,7 +30,6 @@ export const getTipoVenta= async (req, res)=>{
     }
 }
 
-
 export const crearFactura = async (req, res) => {
   console.log(req.body.data)
   try {
@@ -119,9 +118,9 @@ export const crearFactura = async (req, res) => {
       }
     }
     // Procesar los combos
-  
+    if (combos && combos.length > 0) {
       for (const combo of combos) {
-        const comboID = combo.comboID ;
+        const comboID = combo.ComboID;
         const { cantidad } = combo;
 
         // Validar existencia del combo
@@ -151,6 +150,7 @@ export const crearFactura = async (req, res) => {
           }
         }
       }
+    }
 
     // Registrar transacciones para los diferentes tipos de pago
     const transacciones = [];
