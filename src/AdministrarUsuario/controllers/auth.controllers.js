@@ -10,7 +10,7 @@ import jwt from 'jsonwebtoken'
 import Rol from '../models/Rol.js';
 import { createBitacora } from './bitacora.controllers.js';
 import { obtenerPermisosXRol } from '../models/Permisos.js';
-
+import { Telefono, Usuario } from '../models/AsociacionDocumento.js';
 export const login = async (req, res) => {
     const { email, password } = req.body;
     
@@ -167,7 +167,7 @@ export const verifyToken1 = async (req, res, next) => {
     });
 };
 
-
+/* miguellll */
 export const cambiarContrasena = async (req, res) => {
     const { oldPassword, newPassword } = req.body;
     const { id } = req.user; // Asegúrate de que la ID del usuario esté disponible en req.user (probablemente desde el middleware de autenticación)
@@ -199,3 +199,30 @@ export const cambiarContrasena = async (req, res) => {
     }
 };
 
+/* cristiannnn modificar */
+export const modificarContraseña=async (req,res)=>{
+    console.log('datoss cambiar cotra ',req.body)
+    const {correo,telefono,contrasena,newcontrasena}=req.body;
+    try {
+
+        if(!correo || !telefono || !contrasena || !newcontrasena ){
+            return res.status(400).json({msg:"Todos loa campos son requeridos"})
+        }
+        const existUser= await Usuario.findOne({where:{Correo:correo}})
+        if(!existUser) return res.status(404).json({msg:"Usuario no enontrado"})
+        const telefon= await Telefono.findOne({where:{Nro:parseInt(telefono)}})
+        if(  !telefon){
+            return res.status(400).json({msg:"Los datos introducidos son incorrectos"})
+        }
+
+        if(contrasena!=newcontrasena){
+            return res.status(400).json({msg:"contraseñas diferentes"})
+        }
+
+        const hashedPassword = await bcrypt.hash(contrasena, 10);
+        await Usuario.update({Contrasena:hashedPassword},{where:{UsuarioID:existUser.UsuarioID}})
+        res.status(200).json({msg:'contraseñaa cambiadaa'})
+    } catch (error) {
+        res.status(500).json({err:error.message})
+    }
+}

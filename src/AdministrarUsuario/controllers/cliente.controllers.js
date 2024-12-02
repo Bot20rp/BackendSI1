@@ -7,10 +7,10 @@ import cliente from '../models/Cliente.js';
 
 
 export const registrarCliente = async (req, res) => {
-  const { Nombre, Correo, Contrasena, FechaNacimiento, Sexo,NIT,ci,telefono,Direccion} = req.body;
+  const { Nombre, Correo, Contrasena, FechaNacimiento, Sexo,NIT, CI,telefono,Direccion} = req.body;
 
   // Validar que todos los campos necesarios estén presentes
-  if (!Nombre || !Correo || !Contrasena || !FechaNacimiento || !Sexo || !ci || !telefono ) {
+  if (!Nombre || !Correo || !Contrasena || !FechaNacimiento || !Sexo || !CI || !telefono ) {
     return res.status(400).json({ message: 'Todos los campos son obligatorios' });
   }
 
@@ -38,7 +38,7 @@ export const registrarCliente = async (req, res) => {
     });
 
     // Asociar el número de documento al usuario
-    if (ci){
+    if (CI){
       const tipoDocumentCI= await Documento.findOne({
         where:{tipoDocumento:'Cédula de Identidad'}
     });
@@ -46,7 +46,7 @@ export const registrarCliente = async (req, res) => {
       await DetalleDocumento.create({
         UsuarioID: nuevoUsuario.UsuarioID, 
         DocumentoID: tipoDocumentCI.DocumentoID,
-        NumeroDocumento:ci,
+        NumeroDocumento:CI,
       })
     }else{
       return res.status(400).json({message:'fallo con el tipo de documento cedula'}); 
