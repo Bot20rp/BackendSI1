@@ -8,6 +8,6 @@ const router=Router();
 router.get('/producto',getProducto)
 // router.get('/producto',getProductoByID)
 router.post('/productoReg',fileUpload,verifyToken1,registerProducto)
-router.patch('/producto/actualizar',verifyToken1,updateProducto1)
+router.patch('/producto/actualizar',fileUpload,verifyToken1,updateProducto1)
 router.delete('/producto/delete',deleteproducto)
 export default  router;

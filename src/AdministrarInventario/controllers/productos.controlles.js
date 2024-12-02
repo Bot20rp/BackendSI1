@@ -24,8 +24,8 @@ export const registrarProducto = async (req, res) => {
 
 // Función para registrar un producto con sus volúmenes asociados
 export const registerProducto = async (req, res) => {
-    console.log(req.body.data);
-    const { Nombre, Precio, Marca, Estante, Categoria, Volumen } = req.body.data;
+    console.log(req.body);
+    const { Nombre, Precio, Marca, Estante, Categoria, Volumen } = req.body;
     const UsuarioID = req.user.id; // Obtener el ID del usuario logueado
 
     try {
@@ -33,7 +33,10 @@ export const registerProducto = async (req, res) => {
         if (!Nombre || !Precio || !Marca || !Estante || !Categoria || !Volumen) {
             return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
         }
-
+        // Validar que se haya subido una imagen
+        if (!req.file || !req.file.path) {
+            return res.status(400).json({ message: 'La imagen es obligatoria.' });
+        }
         // Crear el nuevo producto
         const newProducto = await producto.create({
             Nombre,
@@ -41,12 +44,13 @@ export const registerProducto = async (req, res) => {
             MarcaID: parseInt(Marca), // Convertir a número
             EstanteID: parseInt(Estante),
             CategoriaID: parseInt(Categoria),
+            DirImagen:req.file.path,
             Estado: 1 // Estado activo por defecto
         });
         //añadiendo el nombre de la imagen
-        const idProd=newProducto.ProductoID;
-        const DirImagen=req.file.path
-        await producto.update({DirImagen},{where :{ProductoID:idProd}})
+        // const idProd=newProducto.ProductoID;
+        // const DirImagen=req.file.path
+        // await producto.update({DirImagen},{where :{ProductoID:idProd}})
 
         // Asociar el volumen con el producto en la tabla intermedia CantidadVolumen
         await CantidadVolumen.create({
@@ -74,10 +78,6 @@ export const getProducto = async (req, res) => {
     console.log(req.body)
     try {
         let productos = await obtProducto()
-        console.log(productos);
-        productos=productos.map((producto)=>({
-            ...producto,DirImagen:producto.DirImagen?`${req.protocol}://${req.get('host')}/images/${producto.DirImagen}`:null
-        }))
         res.status(200).json(productos)
     } catch (error) {
         res.status(500).json({ err: error.message })
@@ -128,8 +128,9 @@ export const deleteproducto = async (req, res) => {
 
 // Función para actualizar un producto con sus volúmenes asociados
 export const updateProducto1 = async (req, res) => {
-    console.log("Contenido de req.body.data:", JSON.stringify(req.body.data, null, 2));
-    const { id :ProductoID , Nombre, Precio, Marca, Estante, Categoria, Volumen } = req.body.data;
+    // console.log("Contenido de req.body.data:", JSON.stringify(req.body.data, null, 2));
+    console.log(req.body)
+    const { id :ProductoID , Nombre, Precio, Marca, Estante, Categoria, Volumen } = req.body;
     const UsuarioID = req.user.id; // Obtener el ID del usuario logueado
     try {
         // Validar que el ID del producto esté presente
@@ -177,6 +178,7 @@ export const updateProducto1 = async (req, res) => {
                 Precio: Precio !== undefined ? parseFloat(Precio) : productoExistente.Precio,
                 MarcaID: marca1 ? marca1.MarcaID : productoExistente.MarcaID,
                 EstanteID: estante1 ? estante1.EstanteID : productoExistente.EstanteID,
+                DirImagen:req.file?req.file.path:productoExistente.DirImagen,
                 CategoriaID: categoria1 ? categoria1.CategoriaID : productoExistente.CategoriaID,
                 Estado: 1
             },
