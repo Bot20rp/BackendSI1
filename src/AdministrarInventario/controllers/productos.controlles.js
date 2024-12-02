@@ -2,7 +2,7 @@ import producto, { createProducto, obtProducto, actProducto } from "../models/Pr
 import CantidadVolumen from "../models/CantidadVolumen.js";
 import { createBitacora } from "../../AdministrarUsuario/controllers/bitacora.controllers.js";
 import { renombrarImagenes } from "../../libs/helpers.js";
-import Volumen from "../models/Volumen.js";
+import volumen from "../models/Volumen.js";
 import categoria from "../models/Categoria.js";
 import estante from "../models/Estante.js";
 import marca from "../models/Marca.js";
@@ -186,7 +186,7 @@ export const updateProducto1 = async (req, res) => {
         // Actualizar o crear la asociación con el volumen en la tabla intermedia CantidadVolumen
         if (Volumen !== undefined) {
             // Buscar el VolumenID basado en la descripción proporcionada
-            const volumenExistente = await Volumen.findOne({
+            const volumenExistente = await volumen.findOne({
                 where: { Descripcion: Volumen } // Aquí buscas por "750 ml"
             });
         
