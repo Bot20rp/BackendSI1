@@ -33,7 +33,7 @@ export const createCombo = async (req, res) => {
             Estado: Estado || 1
         });
         const idCombo=newCombo.ComboID;
-        const DirImagen= renombrarImagenes(req.file.filename,idCombo,'combo_')
+        const DirImagen= req.file.path;
 
         await Combo.update({DirImagen},{where:{ComboID:idCombo}})
         // Insertar productos en DetalleCombo, incluyendo cantidad
