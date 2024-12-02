@@ -124,7 +124,7 @@ export const crearFactura = async (req, res) => {
     if (combos && combos.length > 0) {
       console.log('comb'+combos);
       for (const combo of combos) {
-        const comboID = combo.id;
+        const comboID = combo.comboID;
         const { cantidad } = combo;
         console.log('id:'+ comboID);
         // Validar existencia del combo
