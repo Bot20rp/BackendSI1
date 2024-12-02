@@ -45,7 +45,7 @@ export const registerProducto = async (req, res) => {
         });
         //añadiendo el nombre de la imagen
         const idProd=newProducto.ProductoID;
-        const DirImagen=renombrarImagenes(req.file.filename,idProd,"producto_")
+        const DirImagen=req.file.path
         await producto.update({DirImagen},{where :{ProductoID:idProd}})
 
         // Asociar el volumen con el producto en la tabla intermedia CantidadVolumen
