@@ -44,6 +44,37 @@ export const getLote=async (req,res)=>{
     }
 }
 
+
+export const getLotes = async (req, res) => {
+    try {
+        // Consulta para obtener los lotes con el nombre del producto
+        const lotes = await Lote.findAll({
+            attributes: [
+                "LoteID",
+                "Cantidad",
+                "FechaInicio",
+                "FechaExpiracion",
+                "Estado",
+                [Sequelize.col("producto.Nombre"), "NombreProducto"], // Obtener el nombre del producto
+            ],
+            include: [
+                {
+                    model: Producto,
+                    attributes: [], // No queremos incluir todos los atributos del producto
+                },
+            ],
+            raw: true, // Devuelve resultados como objetos planos
+        });
+
+        // Retornar los lotes como respuesta
+        res.status(200).json(lotes);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
+
 export const deleteLote=async (req,res)=>{
     const UsuarioID = req.user.id;
     try{
