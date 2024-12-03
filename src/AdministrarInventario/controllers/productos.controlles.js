@@ -78,10 +78,6 @@ export const getProducto = async (req, res) => {
     console.log(req.body)
     try {
         let productos = await obtProducto()
-        console.log(productos);
-        productos=productos.map((producto)=>({
-            ...producto,DirImagen:producto.DirImagen?`${req.protocol}://${req.get('host')}/images/${producto.DirImagen}`:null
-        }))
         res.status(200).json(productos)
     } catch (error) {
         res.status(500).json({ err: error.message })
