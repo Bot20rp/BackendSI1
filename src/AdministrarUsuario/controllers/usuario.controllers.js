@@ -73,6 +73,8 @@ export const updateUsuarioG=async (req,res)=>{
   const {id,usuario,correo,genero,telefono,fechaNacimiento,salario,horarioInicio,horarioFin,rol}=req.body.data;
   try {
     let message = '';
+    const generoAbreviado = genero === "Masculino" ? "M" : genero === "Femenino" ? "F" : null;
+
        if(rol==="Administrador"){
            let existAdmin=await Administrador.findByPk(Number(id))
            if(!existAdmin){
@@ -82,7 +84,7 @@ export const updateUsuarioG=async (req,res)=>{
            await Usuario.update({
                Nombre: usuario || existAdmin.Nombre,  
                Correo: correo || existAdmin.Correo,
-               sexo:genero || existAdmin.sexo,
+               sexo:generoAbreviado || existAdmin.sexo,
                FechaNacimiento: fechaNacimiento || existAdmin.FechaNacimiento,
                RolID:1
            },{where:{
@@ -112,7 +114,7 @@ export const updateUsuarioG=async (req,res)=>{
         await Usuario.update({
             Nombre: usuario || existEmple.Nombre,  
             Correo: correo || existEmple.Correo,
-            sexo:genero || existEmple.sexo,
+            sexo:generoAbreviado || existEmple.sexo,
             FechaNacimiento: fechaNacimiento || existEmple.FechaNacimiento,
             RolID:2
         },{
@@ -153,7 +155,7 @@ export const updateUsuarioG=async (req,res)=>{
       await Usuario.update({
           Nombre: usuario || existCli.Nombre,  // si no se envia mantiene el valor actual 
           Correo: correo || existCli.Correo,
-          sexo:genero || existCli.sexo,
+          sexo:generoAbreviado || existCli.sexo,
           FechaNacimiento: fechaNacimiento || existCli.FechaNacimiento,
           RolID:3
       },{
@@ -170,9 +172,7 @@ export const updateUsuarioG=async (req,res)=>{
       },{where:{UsuarioID:Number(id)}})
       return res.status(200).json({msg:"Actualizacion Correcta"})
   }
-
   await createBitacora({ UsuarioID: req.user.id, message }, res);
-
   } catch (error) {
       res.status(500).json({msg:error.message})
   }
