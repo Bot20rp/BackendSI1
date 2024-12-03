@@ -28,7 +28,7 @@ export const registerEmpleado = async (req, res) => {
         const RolID=2;
         // Crear nuevo usuario
         const newEmpleado = await Usuario.create({
-            Nombre, Correo, Contrasena: hashedPassword, FechaNacimiento, Sexo:Sexo, RolID
+            Nombre, Correo, Contrasena: hashedPassword, FechaNacimiento, sexo:Sexo, RolID
         });
 
         // Crear registro en la tabla 'Empleado'
