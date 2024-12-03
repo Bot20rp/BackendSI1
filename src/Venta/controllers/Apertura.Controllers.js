@@ -3,6 +3,10 @@ import Apertura from "../models/Apertura.js";
 
 // Función para convertir el formato de hora a 24 horas
 function convertTo24HourFormat(time) {
+    if (time.includes(':') && !time.includes(' ')) {
+        // Si no hay modificador, asumimos que ya está en 24 horas
+        return time;
+    }
     let [timeStr, modifier] = time.split(' '); // Separa la hora y el 'a.m.'/'p.m.'
     let [hours, minutes, seconds] = timeStr.split(':'); // Separa la hora, minutos y segundos
 
