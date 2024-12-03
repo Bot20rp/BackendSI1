@@ -22,7 +22,7 @@ export const registrarProducto = async (req, res) => {
 }
 
 
-// Función para registrar un producto con sus volúmenes asociados
+// Función para registrar un producto con sus volúmenes asociados rtet
 export const registerProducto = async (req, res) => {
     console.log(req.body);
     const { Nombre, Precio, Marca, Estante, Categoria, Volumen } = req.body;
@@ -78,6 +78,10 @@ export const getProducto = async (req, res) => {
     console.log(req.body)
     try {
         let productos = await obtProducto()
+        console.log(productos);
+        productos=productos.map((producto)=>({
+            ...producto,DirImagen:producto.DirImagen?`${req.protocol}://${req.get('host')}/images/${producto.DirImagen}`:null
+        }))
         res.status(200).json(productos)
     } catch (error) {
         res.status(500).json({ err: error.message })
@@ -128,9 +132,8 @@ export const deleteproducto = async (req, res) => {
 
 // Función para actualizar un producto con sus volúmenes asociados
 export const updateProducto1 = async (req, res) => {
-    // console.log("Contenido de req.body.data:", JSON.stringify(req.body.data, null, 2));
-    console.log(req.body)
-    const { id :ProductoID , Nombre, Precio, Marca, Estante, Categoria, Volumen } = req.body;
+    console.log("Contenido de req.body.data:", JSON.stringify(req.body.data, null, 2));
+    const { id :ProductoID , Nombre, Precio, Marca, Estante, Categoria, Volumen } = req.body.data;
     const UsuarioID = req.user.id; // Obtener el ID del usuario logueado
     try {
         // Validar que el ID del producto esté presente
@@ -178,7 +181,6 @@ export const updateProducto1 = async (req, res) => {
                 Precio: Precio !== undefined ? parseFloat(Precio) : productoExistente.Precio,
                 MarcaID: marca1 ? marca1.MarcaID : productoExistente.MarcaID,
                 EstanteID: estante1 ? estante1.EstanteID : productoExistente.EstanteID,
-                DirImagen:req.file?req.file.path:productoExistente.DirImagen,
                 CategoriaID: categoria1 ? categoria1.CategoriaID : productoExistente.CategoriaID,
                 Estado: 1
             },
@@ -218,7 +220,6 @@ export const updateProducto1 = async (req, res) => {
                 });
             }
         }
-        
         // Registrar el evento en la bitácora
         const message = `actualizado prod: ${ProductoID}, Name ${Nombre || productoExistente.Nombre}`;
         await createBitacora({ UsuarioID, message });

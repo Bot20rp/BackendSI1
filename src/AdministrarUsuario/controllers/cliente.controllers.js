@@ -5,7 +5,6 @@ import bcrypt from 'bcryptjs';
 import Telefono from '../models/Telefono.js';
 import cliente from '../models/Cliente.js';
 
-
 export const registrarCliente = async (req, res) => {
   const { Nombre, Correo, Contrasena, FechaNacimiento, Sexo,NIT, CI,telefono,Direccion} = req.body;
 
