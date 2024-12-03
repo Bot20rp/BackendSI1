@@ -4,7 +4,7 @@ import { db } from '../../config/dbConfig.js';
 import Cliente from '../../AdministrarUsuario/models/Cliente.js';  // Ajustar el nombre y ubicación según tu proyecto
 import Factura from './Factura.js';  // Ajustar el nombre y ubicación según tu proyecto
 import TipoVenta from './TipoVenta.js';  // Ajustar el nombre y ubicación según tu proyecto
-
+// nota venta
 const NotaVenta = db.define('NotaVenta', {
     NotaVentaID: {
         type: DataTypes.INTEGER,

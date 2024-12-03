@@ -1,6 +1,6 @@
 import { DataTypes } from "sequelize";
 import { db } from "../../config/dbConfig.js";
-
+//metodo de entrega
 const MetodoEntrega = db.define('MetodoEntrega', {
     M_entregaID: {
         type: DataTypes.INTEGER,

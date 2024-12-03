@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize";
 import { db } from "../../config/dbConfig.js";
 import MetodoEntrega from "./MetodoEntrega.js";
 import NotaVenta from "./NotaVenta.js";
-
+//pedido
 const Pedidos = db.define('Pedidos', {
     PedidoID: {
         type: DataTypes.INTEGER,
