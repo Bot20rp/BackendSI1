@@ -1,4 +1,8 @@
 import { db } from './src/config/dbConfig.js';
+import dotenv from 'dotenv';
+
+// Cargar variables de entorno
+dotenv.config();
 
 // Importar modelos necesarios
 import Rol from './src/AdministrarUsuario/models/Rol.js';
@@ -9,6 +13,34 @@ import Categoria from './src/AdministrarInventario/models/Categoria.js';
 import Marca from './src/AdministrarInventario/models/Marca.js';
 import Estante from './src/AdministrarInventario/models/Estante.js';
 import Volumen from './src/AdministrarInventario/models/Volumen.js';
+
+// Función para extraer información de DATABASE_URL
+function getDatabaseInfo() {
+  const databaseUrl = process.env.DATABASE_URL;
+  
+  if (databaseUrl) {
+    try {
+      const url = new URL(databaseUrl);
+      return {
+        database: url.pathname.substring(1),
+        host: url.hostname,
+        user: url.username
+      };
+    } catch (error) {
+      return {
+        database: 'Base de datos de producción',
+        host: 'Render PostgreSQL',
+        user: 'Usuario de producción'
+      };
+    }
+  } else {
+    return {
+      database: process.env.DB_NAME || 'Base de datos local',
+      host: process.env.DB_HOST || 'localhost',
+      user: process.env.DB_USER || 'postgres'
+    };
+  }
+}
 
 // Datos esenciales a insertar
 const datosEsenciales = {
@@ -95,6 +127,16 @@ async function poblarDatosEsenciales() {
     // Verificar conexión
     await db.authenticate();
     console.log('✅ Conexión a la base de datos establecida');
+    
+    // Mostrar información de la base de datos
+    const dbInfo = getDatabaseInfo();
+    console.log(`📊 Base de datos: ${dbInfo.database}`);
+    console.log(`🏠 Host: ${dbInfo.host}`);
+    console.log(`👤 Usuario: ${dbInfo.user}`);
+    
+    // Verificar entorno
+    const isProduction = process.env.NODE_ENV === 'production';
+    console.log(`🌍 Entorno: ${isProduction ? 'Producción' : 'Desarrollo'}`);
 
     // 1. Poblar Roles
     console.log('📝 Poblando Roles...');
