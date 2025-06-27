@@ -3,36 +3,63 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-export const db = new Sequelize(
-  process.env.DB_NAME || 'Licoreria',
-  process.env.DB_USER || 'postgres',
-  process.env.DB_PASSWORD || 'mcangel03',
-  {
-    host: process.env.DB_HOST || 'localhost',
-    port: process.env.DB_PORT || 5432,
-    dialect: 'postgres', 
-    logging: process.env.NODE_ENV === 'development' ? console.log : false,
-    timezone: process.env.TIME_ZONE || 'America/La_Paz',
-    dialectOptions: {
-      timezone: 'local',
-    },
-    pool: {
-      max: 5,
-      min: 0,
-      acquire: 30000,
-      idle: 10000
-    }
-  }
-);
+// Esta línea probablemente está mal configurada
+const databaseUrl = process.env.DATABASE_URL;
 
-// Función para conectar a la base de datos
-async function rundb() {
+let db;
+
+if (databaseUrl) {
+  // Usar DATABASE_URL (Render/Producción)
+  db = new Sequelize(databaseUrl, {
+    dialect: 'postgres',
+    logging: false,
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false
+      }
+    }
+  });
+} else {
+  // Usar variables separadas (Local)
+  db = new Sequelize(
+    process.env.DB_NAME,
+    process.env.DB_USER,
+    process.env.DB_PASSWORD,
+    {
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT,
+      dialect: 'postgres',
+      logging: console.log
+    }
+  );
+}
+
+// Función rundb para sincronizar modelos
+const rundb = async () => {
   try {
     await db.authenticate();
     console.log('✅ Conexión a PostgreSQL establecida correctamente');
+    
+    // Mostrar información de la BD
+    const databaseUrl = process.env.DATABASE_URL;
+    if (databaseUrl) {
+      const url = new URL(databaseUrl);
+      console.log(`📊 Base de datos: ${url.pathname.substring(1)}`);
+      console.log(`🏠 Host: ${url.hostname}`);
+    } else {
+      console.log(`📊 Base de datos: ${process.env.DB_NAME || 'Local'}`);
+      console.log(`🏠 Host: ${process.env.DB_HOST || 'localhost'}`);
+    }
+    
+    // NO sincronizar aquí, solo conectar
+    // await db.sync({ alter: false, force: false });
+    
   } catch (error) {
-    console.error('❌ Error al conectar a la base de datos:', error);
+    console.error('❌ Error al conectar con PostgreSQL:', error);
   }
-}
+};
 
+// Exportar ambos: db y rundb
+export { db };
 export default rundb;

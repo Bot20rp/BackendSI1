@@ -4,6 +4,55 @@ import dotenv from 'dotenv';
 // Cargar variables de entorno
 dotenv.config();
 
+// ✅ IMPORTAR TODOS LOS MODELOS CON LAS RUTAS CORRECTAS
+// Modelos de Usuario
+import Rol from './src/AdministrarUsuario/models/Rol.js';
+import Usuario from './src/AdministrarUsuario/models/Usuario.js';
+import Documento from './src/AdministrarUsuario/models/Documento.js';
+import Telefono from './src/AdministrarUsuario/models/Telefono.js';
+import DetalleDocumento from './src/AdministrarUsuario/models/DetalleDocumento.js';
+import Empleado from './src/AdministrarUsuario/models/Empleado.js';
+import Cliente from './src/AdministrarUsuario/models/Cliente.js';
+import Administrador from './src/AdministrarUsuario/models/Administrador.js';
+import Bitacora from './src/AdministrarUsuario/models/Bitacora.js';
+import Permisos from './src/AdministrarUsuario/models/Permisos.js';
+import Privilegio from './src/AdministrarUsuario/models/Privilegio.js';  // ✅ AGREGAR ESTA LÍNEA
+
+// Modelos de Inventario
+import Producto from './src/AdministrarInventario/models/Producto.js';
+import Marca from './src/AdministrarInventario/models/Marca.js';
+import Estante from './src/AdministrarInventario/models/Estante.js';
+import Categoria from './src/AdministrarInventario/models/Categoria.js';
+import Volumen from './src/AdministrarInventario/models/Volumen.js';
+import CantidadVolumen from './src/AdministrarInventario/models/CantidadVolumen.js';
+import Suministro from './src/AdministrarInventario/models/Suministro.js';
+import Almacenamiento from './src/AdministrarInventario/models/Almacenamiento.js';
+import NotaSalida from './src/AdministrarInventario/models/NotaSalida.js';
+import SalidaProducto from './src/AdministrarInventario/models/SalidaProducto.js';
+import TipoSalida from './src/AdministrarInventario/models/TipoSalida.js';
+
+// Modelos de Compra
+import Proveedor from './src/Compra/models/Proveedor.js';
+import FacturaCompra from './src/Compra/models/FacturaCompra.js';
+import Lote from './src/Compra/models/Lote.js';
+
+// Modelos de Venta (✅ AQUÍ ESTABA EL ERROR)
+import Factura from './src/Venta/models/Factura.js';
+import NotaVenta from './src/Venta/models/NotaVenta.js';
+import DetalleVenta from './src/Venta/models/DetalleVenta.js';
+import TipoVenta from './src/Venta/models/TipoVenta.js';
+import VentaCombo from './src/Venta/models/VentaCombo.js';
+import TipoPago from './src/Venta/models/TipoPago.js';
+import Transaccion from './src/Venta/models/Transaccion.js';
+import Apertura from './src/Venta/models/Apertura.js';
+import Combo from './src/Venta/models/Combo.js';  // ✅ ESTABA EN VENTA, NO EN INVENTARIO
+import DetalleCombo from './src/Venta/models/DetalleCombo.js';  // ✅ TAMBIÉN EN VENTA
+import Pedidos from './src/Venta/models/Pedidos.js';
+import MetodoEntrega from './src/Venta/models/MetodoEntrega.js';
+
+// Importar asociaciones (esto es importante)
+import './src/AdministrarUsuario/models/AsociacionDocumento.js';
+
 // Función para extraer información de DATABASE_URL
 function getDatabaseInfo() {
   const databaseUrl = process.env.DATABASE_URL;
@@ -54,6 +103,7 @@ async function syncDatabase() {
     console.log(`🌍 Entorno: ${isProduction ? 'Producción' : 'Desarrollo'}`);
     
     console.log('🔄 Sincronizando modelos...');
+    console.log(`📦 Modelos importados: ${Object.keys(db.models).length}`);
     
     // Sincronizar todos los modelos con la base de datos
     await db.sync({ 
@@ -78,6 +128,12 @@ async function syncDatabase() {
     });
     
     console.log(`\n🎉 Total de tablas: ${results.length}`);
+    
+    if (results.length === 0) {
+      console.log('⚠️  No se crearon tablas. Verificando modelos...');
+      console.log('📦 Modelos disponibles:', Object.keys(db.models));
+    }
+    
     console.log('✅ Sincronización completada exitosamente');
     
   } catch (error) {
