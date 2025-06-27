@@ -39,7 +39,7 @@ export const registrarCliente = async (req, res) => {
     // Asociar el número de documento al usuario
     if (CI){
       const tipoDocumentCI= await Documento.findOne({
-        where:{tipoDocumento:'Cédula de Identidad'}
+        where:{TipoDocumento:'Cédula de Identidad'}
     });
     if(tipoDocumentCI){
       await DetalleDocumento.create({
@@ -54,7 +54,7 @@ export const registrarCliente = async (req, res) => {
 
     if (NIT){
       const tipoDocumentCI= await Documento.findOne({
-        where:{tipoDocumento:'NIT'}
+        where:{TipoDocumento:'NIT'}
     });
     if(tipoDocumentCI){
       await DetalleDocumento.create({

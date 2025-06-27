@@ -1,11 +1,14 @@
 import jwt from 'jsonwebtoken'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 export function createAccesToken(payload){
 
     return new Promise((resolve,reject) => {
         jwt.sign(
             payload,
-            process.env.JWT_SECRETO,
+            process.env.JWT_SECRET,
             {
                  expiresIn:"1d",
             },

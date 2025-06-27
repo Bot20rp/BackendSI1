@@ -49,7 +49,7 @@ export const login = async (req, res) => {
             return res.status(401).json({ mensaje: 'Contraseña incorrecta' });
         }
         const token = await createAccesToken({ id: existUser.UsuarioID });
-        const permisos = await obtenerPermisosXRol(existUser.RolID);
+        //const permisos = await obtenerPermisosXRol(existUser.RolID);
         const documentos = existUser.DetalleDocumentos.map((doc) => {
             return { 
                 tipo: doc.Documento.TipoDocumento, 
@@ -66,7 +66,7 @@ export const login = async (req, res) => {
                 nombre:existUser.Nombre,
                 email: existUser.Correo,
                 rol: existUser.Rol.Nombre,
-                permisos,
+                //permisos,
                 genero: existUser.sexo,
                 fechaNacimiento: existUser.FechaNacimiento,
                 direccion: existUser.cliente?.Direccion || null,

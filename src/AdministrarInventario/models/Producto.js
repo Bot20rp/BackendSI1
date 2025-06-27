@@ -39,7 +39,7 @@ const producto= db.define('producto',{
         }
     },
     Estado:{
-        type:DataTypes.TINYINT
+        type:DataTypes.SMALLINT 
     },
     DirImagen:{
         type:DataTypes.STRING(255)

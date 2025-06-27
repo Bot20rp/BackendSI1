@@ -22,9 +22,9 @@ export const createBitacora=async(requesito)=>{
     try {
         // const ip = req.ip.replace(/^::ffff:/, '');
         const ipResponse=await axios.get("https://api.ipify.org/?format=json")
-        await Bitacora.create({
+        /*await Bitacora.create({
             UsuarioID,ip:ipResponse.data.ip,Fecha,Hora,Accion:`${message}`
-        }) 
+        }) */
     } catch (error) {
         //console.log(error);
         throw new Error(`${error.message}`);       

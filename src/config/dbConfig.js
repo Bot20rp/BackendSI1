@@ -1,24 +1,20 @@
 import { Sequelize } from 'sequelize';
 import dotenv from 'dotenv';
 
-// Cargar variables de entorno desde el archivo .env
-dotenv.config({ path: '.env' });
+dotenv.config();
 
-
-// Crear la conexión a la base de datos
 export const db = new Sequelize(
   process.env.DB_NAME || 'Licoreria',
-  process.env.DB_USER || 'root',
-  process.env.DB_PASSWORD || 'LdWfvByGlIaMXvYzlozdfGbkdAseyQFf',
+  process.env.DB_USER || 'postgres',
+  process.env.DB_PASSWORD || 'mcangel03',
   {
-    host: process.env.DB_HOST || 'junction.proxy.rlwy.net',
-    port: process.env.DB_PORT || 44972,
-    dialect: 'mysql',
+    host: process.env.DB_HOST || 'localhost',
+    port: process.env.DB_PORT || 5432,
+    dialect: 'postgres', 
+    logging: process.env.NODE_ENV === 'development' ? console.log : false,
+    timezone: process.env.TIME_ZONE || 'America/La_Paz',
     dialectOptions: {
-      connectTimeout: 60000,  // Aumenta el tiempo de espera a 60 segundos
-    },
-    define: {
-      timestamps: false
+      timezone: 'local',
     },
     pool: {
       max: 5,
@@ -29,15 +25,14 @@ export const db = new Sequelize(
   }
 );
 
-// Función para autenticar y sincronizar la base de datos
-const rundb = async () => {
+// Función para conectar a la base de datos
+async function rundb() {
   try {
     await db.authenticate();
-    await db.sync();
-    console.log('Conexión establecida con éxito.');
+    console.log('✅ Conexión a PostgreSQL establecida correctamente');
   } catch (error) {
-    console.error('No se pudo conectar a la base de datos:', error);
+    console.error('❌ Error al conectar a la base de datos:', error);
   }
-};
+}
 
 export default rundb;
