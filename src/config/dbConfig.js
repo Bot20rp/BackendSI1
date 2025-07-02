@@ -12,13 +12,7 @@ if (databaseUrl) {
   // Usar DATABASE_URL (Render/Producción)
   db = new Sequelize(databaseUrl, {
     dialect: 'postgres',
-    logging: false,
-    dialectOptions: {
-      ssl: {
-        require: true,
-        rejectUnauthorized: false
-      }
-    }
+    logging: false
   });
 } else {
   // Usar variables separadas (Local)
