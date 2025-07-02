@@ -35,10 +35,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use('/images', express.static(path.join(__dirname, 'src/libs/image')));
 app.use(cors({
-    origin: 'https://tiendasya.netlify.app',
-     //origin:'http://localhost:5173',
+    origin: '*',
     credentials: true,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     allowedHeaders: 'Content-Type,Authorization',
   }));
 

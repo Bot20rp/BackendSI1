@@ -1,11 +1,14 @@
 import { db } from './src/config/dbConfig.js';
 import dotenv from 'dotenv';
+import bcrypt from 'bcryptjs'; // Asegúrate de tener bcryptjs instalado
 
 // Cargar variables de entorno
 dotenv.config();
 
 // Importar modelos necesarios
 import Rol from './src/AdministrarUsuario/models/Rol.js';
+import Usuario from './src/AdministrarUsuario/models/Usuario.js';
+import Administrador from './src/AdministrarUsuario/models/Administrador.js';
 import Documento from './src/AdministrarUsuario/models/Documento.js';
 import TipoPago from './src/Venta/models/TipoPago.js';
 import TipoVenta from './src/Venta/models/TipoVenta.js';
@@ -218,6 +221,50 @@ async function poblarDatosEsenciales() {
     }
     console.log('✅ Volúmenes poblados correctamente');
 
+    // 9. CREAR ADMINISTRADOR POR DEFECTO
+    console.log('👤 Creando Administrador por defecto...');
+    
+    // Buscar el rol de Administrador
+    const rolAdmin = await Rol.findOne({ where: { Nombre: 'Administrador' } });
+    
+    if (rolAdmin) {
+      // Encriptar contraseña
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash('admin', saltRounds);
+      
+      // Crear usuario administrador
+      const [adminUser, createdUser] = await Usuario.findOrCreate({
+        where: { Correo: 'admin@gmail.com' },
+        defaults: {
+          Nombre: 'Administrador',
+          Correo: 'admin@gmail.com',
+          Contrasena: hashedPassword,
+          sexo: 'M',
+          FechaNacimiento: new Date('1990-01-01'),
+          RolID: rolAdmin.RolID,
+          Estado: true
+        }
+      });
+
+      if (createdUser) {
+        console.log('✅ Usuario administrador creado');
+        
+        // Crear registro en tabla Administrador
+        await Administrador.findOrCreate({
+          where: { AdministradorID: adminUser.UsuarioID },
+          defaults: {
+            AdministradorID: adminUser.UsuarioID
+          }
+        });
+        
+        console.log('✅ Registro de Administrador creado');
+      } else {
+        console.log('ℹ️ Usuario administrador ya existe');
+      }
+    } else {
+      console.log('❌ No se encontró el rol de Administrador');
+    }
+
     console.log('🎉 ¡Todos los datos esenciales han sido poblados correctamente!');
     
     // Mostrar resumen
@@ -229,18 +276,26 @@ async function poblarDatosEsenciales() {
       categorias: await Categoria.count(),
       marcas: await Marca.count(),
       estantes: await Estante.count(),
-      volumenes: await Volumen.count()
+      volumenes: await Volumen.count(),
+      usuarios: await Usuario.count(),
+      administradores: await Administrador.count()
     };
 
     console.log('\n📊 Resumen de datos poblados:');
     console.log(`  - Roles: ${resumen.roles}`);
     console.log(`  - Tipos de Documento: ${resumen.documentos}`);
     console.log(`  - Tipos de Pago: ${resumen.tiposPago}`);
-    console.log(`  - Tipos de Venta: ${resumen.tiosVenta}`);
+    console.log(`  - Tipos de Venta: ${resumen.tiposVenta}`);
     console.log(`  - Categorías: ${resumen.categorias}`);
     console.log(`  - Marcas: ${resumen.marcas}`);
     console.log(`  - Estantes: ${resumen.estantes}`);
     console.log(`  - Volúmenes: ${resumen.volumenes}`);
+    console.log(`  - Usuarios: ${resumen.usuarios}`);
+    console.log(`  - Administradores: ${resumen.administradores}`);
+
+    console.log('\n🔑 Credenciales del administrador:');
+    console.log('  - Email: admin@gmail.com');
+    console.log('  - Contraseña: admin');
 
   } catch (error) {
     console.error('❌ Error al poblar datos esenciales:', error);

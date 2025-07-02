@@ -1,0 +1,29 @@
+services:
+  app:
+    build: .
+    container_name: backend_audit
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://audit_user:audit_password@db:5432/auditoria_db?sslmode=disable
+      - JWT_SECRET=icorebiz
+      - PORT=3000
+      - NODE_ENV=development
+    depends_on:
+      - db
+      
+  db:
+    image: postgres:15
+    container_name: postgres_audit
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: audit_user
+      POSTGRES_PASSWORD: audit_password
+      POSTGRES_DB: auditoria_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

@@ -8,7 +8,8 @@
     "start": "node index.js",
     "sync-db": "node sync-database.js",
     "seed-db": "node seed-database.js",
-    "setup-db": "npm run sync-db && npm run seed-db"
+    "setup-db": "npm run sync-db && npm run seed-db",
+    "start:dev": "npm run setup-db && npm run dev"
   },
   "keywords": [],
   "author": "",
